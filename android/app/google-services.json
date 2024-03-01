@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "55871191008",
+    "project_id": "umconnect-bba25",
+    "storage_bucket": "umconnect-bba25.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:55871191008:android:60ac03e0dab14c7c03dd85",
+        "android_client_info": {
+          "package_name": "com.example.um_connect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4elyzhfK2_mGF5RM3DmTUVVEDcjJ3ks4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
