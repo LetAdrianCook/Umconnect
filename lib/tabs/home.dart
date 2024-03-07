@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:um_connect/comp/bottomnav.dart";
 import "package:um_connect/comp/drawer.dart";
 import "package:um_connect/comp/usersintile.dart";
 import "package:um_connect/services/auth/auth_service.dart";
@@ -14,9 +15,10 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final ChatService _chatService = ChatService();
-
+  int _selectedIndex = 0;
   final AuthService _authService = AuthService();
   TextEditingController _searchController = TextEditingController();
+  int currentPageIndex = 0;
 
   @override
   void dispose() {
@@ -27,13 +29,33 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Um Connect"),
+        iconTheme: IconThemeData(color: Colors.red),
+        title: const Text(
+          "Chats",
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Color(0xFFFFC62828),
+              fontSize: 25),
+        ),
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.grey,
         elevation: 0,
       ),
+      bottomNavigationBar: BottomBar(
+          selectedIndex: _selectedIndex,
+          onTabChange: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          }),
       drawer: UmDrawer(),
-      body: _buildUserList(context),
+      body: Column(
+        children: [
+          Expanded(
+            child: _buildUserList(context),
+          ),
+        ],
+      ),
       backgroundColor: Theme.of(context).colorScheme.background,
     );
   }
@@ -64,14 +86,27 @@ class _HomeState extends State<Home> {
             Container(
               margin: EdgeInsets.all(10),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: Color(0xFFFFC62828),
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(15),
                 color: Theme.of(context).colorScheme.secondary,
               ),
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: TextField(
                 controller: _searchController,
                 decoration: const InputDecoration(
+                  icon: Icon(
+                    Icons.search,
+                    color: Color(0xFFFFC62828),
+                    size: 25,
+                  ),
                   hintText: 'Search by email',
+                  hintStyle: TextStyle(
+                    fontSize: 17,
+                    color: Color(0xFFFFC62828),
+                  ),
                   border: InputBorder.none,
                 ),
                 onSubmitted: (value) {

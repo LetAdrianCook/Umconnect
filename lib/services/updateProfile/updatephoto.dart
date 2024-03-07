@@ -212,10 +212,11 @@ class _updatePhotoState extends State<updatePhoto> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        foregroundColor: Colors.grey,
+        backgroundColor: Theme.of(context).colorScheme.background,
         elevation: 0,
         centerTitle: true,
-        title: const Text('Upload Photo'),
+        title: const Text('Update Photo'),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);

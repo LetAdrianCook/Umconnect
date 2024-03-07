@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as Path;
+import 'package:um_connect/services/auth/session.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -31,6 +36,32 @@ class AuthService {
     }
   }
 
+  Future<String> uploadImageToFirebase(File file) async {
+    String fileUrl = '';
+    String fileName = Path.basename(file.path);
+    var reference = FirebaseStorage.instance.ref().child('images/$fileName');
+    UploadTask uploadTask = reference.putFile(file);
+    TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+    await taskSnapshot.ref.getDownloadURL().then((value) {
+      fileUrl = value;
+    });
+    print("Url $fileUrl");
+    return fileUrl;
+  }
+
+  Future<String> uploadDocumentToFirebase(File file) async {
+    String fileUrl = '';
+    String fileName = Path.basename(file.path);
+    var reference = FirebaseStorage.instance.ref().child('files/$fileName');
+    UploadTask uploadTask = reference.putFile(file);
+    TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+    await taskSnapshot.ref.getDownloadURL().then((value) {
+      fileUrl = value;
+    });
+    print("Document Url: $fileUrl");
+    return fileUrl;
+  }
+
   Future<void> showWrongPasswordDialog({required BuildContext context}) async {
     return showDialog<void>(
       context: context,
@@ -41,7 +72,7 @@ class AuthService {
           content: const SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('Naay na wrong pag type paki balik usab.'),
+                Text('Error.'),
               ],
             ),
           ),
@@ -107,32 +138,6 @@ class AuthService {
     );
   }
 
-  Future<void> showNoInputDialog({required BuildContext context}) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible:
-          false, // Prevents dismissing the dialog with a tap outside of it
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Login Error'),
-          content: const SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Butanga pd og email og pass no.'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () => Navigator.of(context).pop(),
-            )
-          ],
-        );
-      },
-    );
-  }
-
   Future<void> showExistingEmailDialog({required BuildContext context}) async {
     return showDialog<void>(
       context: context,
@@ -160,7 +165,12 @@ class AuthService {
   }
 
   //muhawa or mag signout
-  Future<void> signOut() async {
-    return await _auth.signOut();
+  Future<void> signOut(BuildContext context) async {
+    await _auth.signOut();
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => Session()),
+      (Route<dynamic> route) => false,
+    );
   }
 }

@@ -1,5 +1,10 @@
+import "dart:io";
+
 import "package:cloud_firestore/cloud_firestore.dart";
+import "package:file_picker/file_picker.dart";
+import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
+import "package:image_picker/image_picker.dart";
 import "package:um_connect/comp/messagedesign.dart";
 import "package:um_connect/services/auth/auth_service.dart";
 import "package:um_connect/services/chat/chatservice.dart";
@@ -24,6 +29,7 @@ class _UmChatState extends State<UmChat> {
 
   final ChatService chatService = ChatService();
   final AuthService authService = AuthService();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   FocusNode umFocusNode = FocusNode();
 
@@ -51,8 +57,86 @@ class _UmChatState extends State<UmChat> {
         curve: Curves.fastOutSlowIn);
   }
 
-  void sendPic() {}
-  void sendFile() {}
+  void openMedia() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Center(child: const Text("Attach Image or Files")),
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                InkWell(
+                  onTap: () async {
+                    final ImagePicker _picker = ImagePicker();
+                    final XFile? image =
+                        await _picker.pickImage(source: ImageSource.camera);
+                    if (image != null) {
+                      Navigator.pop(context);
+
+                      String imageUrl = await authService
+                          .uploadImageToFirebase(File(image.path));
+
+                      chatService.sendMessage(widget.receiverID, imageUrl);
+                    }
+                  },
+                  child: const Icon(
+                    Icons.camera_alt,
+                    size: 30,
+                  ),
+                ),
+                const SizedBox(width: 20),
+                InkWell(
+                  onTap: () async {
+                    final ImagePicker _picker = ImagePicker();
+                    final XFile? image =
+                        await _picker.pickImage(source: ImageSource.gallery);
+                    if (image != null) {
+                      Navigator.pop(context);
+
+                      String imageUrl = await authService
+                          .uploadImageToFirebase(File(image.path));
+
+                      chatService.sendMessage(widget.receiverID, imageUrl);
+                    }
+                  },
+                  child: const Icon(
+                    Icons.image_outlined,
+                    size: 30,
+                  ),
+                ),
+                const SizedBox(width: 20),
+                InkWell(
+                  onTap: () async {
+                    final FilePicker _picker = FilePicker.platform;
+                    final FilePickerResult? result = await _picker.pickFiles(
+                        type: FileType.custom,
+                        allowedExtensions: ['pdf', 'doc', 'docx', 'pptx']);
+
+                    if (result != null) {
+                      Navigator.pop(context);
+
+                      String? filePath = result.files.single.path;
+
+                      if (filePath != null) {
+                        String documentUrl = await authService
+                            .uploadDocumentToFirebase(File(filePath));
+                        chatService.sendMessage(widget.receiverID, documentUrl);
+                      } else {
+                        print("empty");
+                      }
+                    }
+                  },
+                  child: const Icon(
+                    Icons.attach_file,
+                    size: 30,
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
 
   @override
   void dispose() {
@@ -122,6 +206,9 @@ class _UmChatState extends State<UmChat> {
     var messageAllign =
         isCurUser ? Alignment.centerRight : Alignment.centerLeft;
 
+    var timeAllign =
+        isCurUser ? EdgeInsets.only(right: 20) : EdgeInsets.only(left: 20);
+
     DateTime messageDateTime = DateTime.parse(data['dateTime']);
 
     return Container(
@@ -130,29 +217,33 @@ class _UmChatState extends State<UmChat> {
           crossAxisAlignment:
               isCurUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
-            MessageDesign(message: data["message"], isCurUser: isCurUser),
-            Text(getTimeAgo(
-                messageDateTime)), // Display time ago instead of datetime
+            MessageDesign(
+              message: data["message"],
+              isCurUser: isCurUser,
+            ),
+            Container(
+              margin: timeAllign,
+              child: Text(
+                getTimeAgo(messageDateTime),
+                style: TextStyle(fontSize: 13),
+              ),
+            ), // Display time ago instead of datetime
           ],
         ));
   }
 
   Widget MessageInput() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 30.0),
+      padding: const EdgeInsets.only(bottom: 25),
       child: Row(
         children: [
           IconButton(
-            onPressed: sendPic,
-            icon: const Icon(Icons.perm_media_rounded),
-          ),
-          IconButton(
-            onPressed: sendFile,
-            icon: const Icon(Icons.attach_file_rounded),
+            onPressed: openMedia,
+            icon: const Icon(Icons.add_rounded),
           ),
           Expanded(
             child: Container(
-              margin: const EdgeInsets.only(left: 25),
+              margin: const EdgeInsets.only(left: 25, right: 20),
               child: TextField(
                 focusNode: umFocusNode,
                 controller: messageController,
@@ -161,12 +252,13 @@ class _UmChatState extends State<UmChat> {
             ),
           ),
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
+            margin: const EdgeInsets.only(right: 20),
             child: CircleAvatar(
-              backgroundColor: Colors.lightBlueAccent,
+              backgroundColor: Color(0xFFFFC62828),
               child: IconButton(
                 onPressed: sendMessage,
-                icon: const Icon(Icons.arrow_forward),
+                icon: const Icon(Icons.send),
+                color: Colors.white,
               ),
             ),
           ),

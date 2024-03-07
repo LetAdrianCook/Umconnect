@@ -20,16 +20,25 @@ class UserInTiles extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondary,
-          borderRadius: BorderRadius.circular(15),
-        ),
-        margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
-        padding: const EdgeInsets.all(30),
+            color: Theme.of(context).colorScheme.secondary,
+            border: Border.all(color: Colors.red, width: 1),
+            borderRadius: BorderRadius.circular(20)),
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        padding: const EdgeInsets.all(15),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundImage: NetworkImage(profilePic),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(
+                  color: Colors.red,
+                  width: 1,
+                ),
+              ),
+              child: CircleAvatar(
+                radius: 30,
+                backgroundImage: NetworkImage(profilePic),
+              ),
             ),
             const SizedBox(width: 20),
             Column(
@@ -37,15 +46,37 @@ class UserInTiles extends StatelessWidget {
               children: [
                 Text(
                   dname,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 22),
                 ),
-                const SizedBox(height: 10),
                 Text(text),
               ],
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class LimitedTextDisplayWidget extends StatelessWidget {
+  final String text;
+  final int maxDisplayLength;
+
+  const LimitedTextDisplayWidget({
+    Key? key,
+    required this.text,
+    required this.maxDisplayLength,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final truncatedText = text.length > maxDisplayLength
+        ? '${text.substring(0, maxDisplayLength)}...'
+        : text;
+
+    return Text(
+      truncatedText,
     );
   }
 }

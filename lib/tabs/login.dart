@@ -23,78 +23,88 @@ class Login extends StatelessWidget {
     }
   }
 
+  buttonStyle() => ElevatedButton.styleFrom(
+      backgroundColor: const Color.fromARGB(255, 209, 9, 9),
+      fixedSize: const Size(332, 50),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5), // Adjust the border radius here
+      ));
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // ang logo sa atong message app
-          Container(
-            margin: const EdgeInsets.only(top: 35),
-            width: 200,
-            height: 200,
-            child: Image.asset(
-              "images/logoapp.png",
-              fit: BoxFit.fill,
-            ),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-
-          Text(
-            "UM Connect",
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              fontSize: 18,
-            ),
-          ),
-
-          Text(
-            "Login",
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              fontSize: 16,
-            ),
-          ),
-
-          const SizedBox(height: 25),
-
-          Fields(
-            hintText: "Email",
-            hidePass: false,
-            controller: emailcontroller,
-          ),
-          const SizedBox(height: 10),
-          Fields(
-            hintText: "Password",
-            hidePass: true,
-            controller: passcontroller,
-          ),
-          const SizedBox(height: 15),
-          UmButton(buttonName: "Login", onTap: () => login(context)),
-          const SizedBox(height: 15),
-          Row(
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                "Not registered yet?",
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
-              ),
-              GestureDetector(
-                onTap: onTap,
-                child: Text(
-                  " Register now",
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold),
+              Container(
+                width: 200,
+                height: 200,
+                child: Image.asset(
+                  "images/logoapp.png",
+                  fit: BoxFit.fill,
                 ),
               ),
+              const SizedBox(
+                height: 5,
+              ),
+              Text(
+                "UM CONNECT",
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              Fields(
+                hintText: "Email",
+                hidePass: false,
+                controller: emailcontroller,
+              ),
+              const SizedBox(height: 10),
+              Fields(
+                hintText: "Password",
+                hidePass: true,
+                controller: passcontroller,
+              ),
+              const SizedBox(height: 30),
+              ElevatedButton(
+                style: buttonStyle(),
+                onPressed: () {
+                  login(context);
+                },
+                child: const Text(
+                  'LOGIN',
+                  style: TextStyle(
+                      fontSize: 15, color: Color.fromRGBO(250, 249, 249, 1)),
+                ),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Not registered yet?",
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.w400),
+                  ),
+                  GestureDetector(
+                    onTap: onTap,
+                    child: Text(
+                      " Register now",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              )
             ],
-          )
-        ],
+          ),
+        ),
       ),
     );
   }
