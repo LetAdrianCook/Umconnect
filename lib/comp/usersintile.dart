@@ -19,24 +19,20 @@ class UserInTiles extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondary,
-            border: Border.all(color: Colors.red, width: 1),
-            borderRadius: BorderRadius.circular(20)),
-        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        padding: const EdgeInsets.all(15),
+        margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+        padding: EdgeInsets.all(15),
         child: Row(
           children: [
             Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(31),
                 border: Border.all(
                   color: Colors.red,
                   width: 1,
                 ),
               ),
               child: CircleAvatar(
-                radius: 30,
+                radius: 31,
                 backgroundImage: NetworkImage(profilePic),
               ),
             ),
@@ -44,12 +40,14 @@ class UserInTiles extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  dname,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 22),
+                LimitedTextDisplayWidget2(
+                  text: dname,
+                  maxDisplayLength: 20,
                 ),
-                Text(text),
+                LimitedTextDisplayWidget1(
+                  text: text,
+                  maxDisplayLength: 30,
+                )
               ],
             ),
           ],
@@ -59,11 +57,11 @@ class UserInTiles extends StatelessWidget {
   }
 }
 
-class LimitedTextDisplayWidget extends StatelessWidget {
+class LimitedTextDisplayWidget1 extends StatelessWidget {
   final String text;
   final int maxDisplayLength;
 
-  const LimitedTextDisplayWidget({
+  const LimitedTextDisplayWidget1({
     Key? key,
     required this.text,
     required this.maxDisplayLength,
@@ -77,6 +75,29 @@ class LimitedTextDisplayWidget extends StatelessWidget {
 
     return Text(
       truncatedText,
+    );
+  }
+}
+
+class LimitedTextDisplayWidget2 extends StatelessWidget {
+  final String text;
+  final int maxDisplayLength;
+
+  const LimitedTextDisplayWidget2({
+    Key? key,
+    required this.text,
+    required this.maxDisplayLength,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final truncatedText = text.length > maxDisplayLength
+        ? '${text.substring(0, maxDisplayLength)}...'
+        : text;
+
+    return Text(
+      truncatedText,
+      style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
     );
   }
 }
